@@ -3,16 +3,15 @@ name: Build and Push ComfyUI-VastAI
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # 手動でビルドを回したい時用
+  workflow_dispatch: # 手動実行用ボタンをActionsタブに表示
 
 env:
   REGISTRY: ghcr.io
-  # リポジトリ名 (zgock999/comfyui-vastai 等) を自動取得
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
-    runs-on: self-hosted # 稼働中のセルフホストランナーを使用
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -21,6 +20,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 1. ランナー内の古いビルドキャッシュを物理的に削除（ゴースト対策）
+      - name: Prune Docker builder cache
+        run: docker builder prune -f
+
+      # 2. GitHub Container Registry へのログイン
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
         with:
@@ -28,6 +32,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # 3. タグ（latest と short-sha）の生成
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -37,16 +42,14 @@ jobs:
             type=raw,value=latest
             type=sha,format=short
 
-      # 5090 (Blackwell) 対応のビルド
-      # セルフホストランナー上の Docker キャッシュを利用して高速化
+      # 4. ビルドおよびプッシュ（no-cache を有効化）
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
+          # キャッシュを一切使わず、すべてのレイヤーを最初からビルドする
+          no-cache: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # セルフホストランナー側のディスク容量に余裕がある場合、
-          # インラインキャッシュを使うと 2回目以降のビルドが劇的に早くなります
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from / cache-to は意図的に除外してキャッシュ汚染を防止
