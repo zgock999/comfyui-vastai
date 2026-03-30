@@ -5,8 +5,8 @@ FROM rocker/cuda:cuda13.0-py3.12
 RUN apt-get update && apt-get install -y \
     tmux rclone vim libgl1 libglib2.0-0 \
     build-essential python3-dev \
-    cuda-toolkit-13-1 \
-    && rm -rf /var/lib/apt/lists/*
+    cuda-toolkit-13-1 
+
 
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
