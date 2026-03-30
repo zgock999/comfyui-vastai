@@ -15,7 +15,7 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # 2. ComfyUI 本体と依存関係の導入(このイメージは/root/が作業場所)
 WORKDIR /root
-RUN sudo git clone https://github.com/comfyanonymous/ComfyUI.git && \
+RUN cd /root && git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /root/ComfyUI && \
     pip3 install --no-cache-dir -r requirements.txt
 
