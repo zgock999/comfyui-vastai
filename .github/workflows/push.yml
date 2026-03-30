@@ -48,5 +48,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           # セルフホストランナー側のディスク容量に余裕がある場合、
           # インラインキャッシュを使うと 2回目以降のビルドが劇的に早くなります
-          #cache-from: type=gha
-          #cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
