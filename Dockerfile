@@ -18,7 +18,7 @@ RUN pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation --brea
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
-RUN pip3 install comfyui-manager --break-system-packages
+RUN pip3 install  --no-cache-dir comfyui-manager --break-system-packages
 
 ## カスタムノードのインストール
 ### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
