@@ -7,8 +7,10 @@ RUN apt-get update && apt-get install -y \
     build-essential python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
 # 1.5 ビルド用 Python パッケージを先に更新
-RUN pip3 install --no-cache-dir --break-system-packages setuptools wheel
+RUN pip3 install --no-cache-dir setuptools wheel
 
 # 2. ComfyUI 本体と依存関係の導入
 WORKDIR /workspace
@@ -20,11 +22,11 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 # --no-build-isolation を使う場合、先に依存関係（triton, setuptools等）が
 # インストールされている必要があります。
 RUN pip3 install --no-cache-dir triton --break-system-packages && \
-    pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation --break-system-packages
+    pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
-RUN pip3 install  --no-cache-dir comfyui-manager --break-system-packages
+RUN pip3 install  --no-cache-dir comfyui-manager
 
 ## カスタムノードのインストール
 ### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
@@ -37,7 +39,7 @@ RUN cd custom_nodes && \
 
 # 各ノードの依存関係を個別にインストール（エラーが出たノードを特定するため）
 # 失敗してもビルドを止めない `--no-cache-dir` などを付けて安定させます
-RUN for req in custom_nodes/*/requirements.txt; do pip3 install --break-system-packages --no-cache-dir -r "$req"; done
+RUN for req in custom_nodes/*/requirements.txt; do pip3 install --no-cache-dir -r "$req"; done
 
 # 5. ディレクトリの事前作成（rclone 同期先）
 RUN mkdir -p /workspace/ComfyUI/models/unet \
