@@ -16,14 +16,14 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 # 2. ComfyUI 本体と依存関係の導入(このイメージは/root/が作業場所)
 WORKDIR /root
 RUN sudo git clone https://github.com/comfyanonymous/ComfyUI.git && \
-    cd ComfyUI && \
+    cd /root/ComfyUI && \
     pip3 install --no-cache-dir -r requirements.txt
 
 
 # 3. SageAttention の導入
 # pipを用いたインストールはエラーになるため、公式の指定通りsetup.pyでインストール
 RUN cd /root && isudo git clone https://github.com/thu-ml/SageAttention.git && \
-    cd SageAttention && python setup.py install
+    cd /root/SageAttention && python setup.py install
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
