@@ -2,7 +2,7 @@
 FROM rocker/cuda:cuda13.0-py3.12
 
 # 1. システムツールの追加（build-essential と python3-dev を追加）
-RUN apt-get update && apt-get install -y \
+RUN sudo apt-get update && sudo apt-get install -y \
     tmux rclone vim libgl1 libglib2.0-0 \
     build-essential python3-dev \
     cuda-toolkit-13-1 
