@@ -18,11 +18,11 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
     pip3 install --no-cache-dir -r requirements.txt
 
+
 # 3. SageAttention の導入
-# --no-build-isolation を使う場合、先に依存関係（triton, setuptools等）が
-# インストールされている必要があります。
-RUN pip3 install --no-cache-dir triton  && \
-    pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation
+# PyPI のリストに現れないため、GitHub リポジトリから直接 2.2.0 を指定してビルド
+RUN pip3 install --no-cache-dir --break-system-packages \
+    "git+https://github.com/thu-ml/SageAttention.git@v2.2.0"
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
