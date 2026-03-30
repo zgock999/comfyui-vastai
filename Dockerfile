@@ -14,7 +14,7 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 
 # 3. SageAttention の導入
 # 5090 環境（CUDA 12.x）でその場でビルドさせるのが最も確実
-RUN pip install --no-cache-dir sageattention==2.2.0 --no-build-isolation --break-system-packages
+RUN pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation --break-system-packages
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
