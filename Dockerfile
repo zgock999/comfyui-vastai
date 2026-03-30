@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /workspace
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
-    pip install --no-cache-dir -r requirements.txt
+    pip3 install --no-cache-dir -r requirements.txt
 
 # 3. SageAttention の導入
 # 5090 環境（CUDA 12.x）でその場でビルドさせるのが最も確実
