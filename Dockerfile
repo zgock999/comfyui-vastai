@@ -15,14 +15,14 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # 2. ComfyUI 本体と依存関係の導入(このイメージは/root/が作業場所)
 WORKDIR /root
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
+RUN sudo git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
     pip3 install --no-cache-dir -r requirements.txt
 
 
 # 3. SageAttention の導入
 # pipを用いたインストールはエラーになるため、公式の指定通りsetup.pyでインストール
-RUN cd /root && git clone https://github.com/thu-ml/SageAttention.git && \
+RUN cd /root && isudo git clone https://github.com/thu-ml/SageAttention.git && \
     cd SageAttention && python setup.py install
 
 # 4. Custom Nodesの導入
@@ -32,11 +32,11 @@ RUN pip3 install  --no-cache-dir comfyui-manager
 ## カスタムノードのインストール
 ### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
 RUN cd /root/ComfyUI/custom_nodes && \
-    git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git && \
-    git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git && \
-    git clone --depth 1 https://github.com/yolain/ComfyUI-Easy-Use.git && \
-    git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Pack.git && \
-    git clone --depth 1 https://github.com/sylym/comfy_vid2vid comfyui-vid2vid
+    sudo git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git && \
+    sudo git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git && \
+    sudo git clone --depth 1 https://github.com/yolain/ComfyUI-Easy-Use.git && \
+    sudo git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Pack.git && \
+    sudo git clone --depth 1 https://github.com/sylym/comfy_vid2vid comfyui-vid2vid
 
 # 各ノードの依存関係を個別にインストール（エラーが出たノードを特定するため）
 # 失敗してもビルドを止めない `--no-cache-dir` などを付けて安定させます
