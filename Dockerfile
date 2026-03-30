@@ -21,7 +21,7 @@ RUN sudo git clone https://github.com/comfyanonymous/ComfyUI.git && \
 
 
 # 3. SageAttention の導入
-# pipを用いたインストールはエラーになるため、公式の指定通りsetup.pyでインストール
+# pipを用いたインストールはエラーになるため、公式の指定通りpython setup.pyでインストール
 RUN cd /root && isudo git clone https://github.com/thu-ml/SageAttention.git && \
     cd /root/SageAttention && python setup.py install
 
