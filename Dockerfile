@@ -1,10 +1,14 @@
 # 5090 (Compute Capability 10.0) を意識し、最新の PyTorch イメージを選択
 FROM vastai/pytorch:latest
 
-# 1. 最小限のシステムツール追加
+# 1. システムツールの追加（build-essential と python3-dev を追加）
 RUN apt-get update && apt-get install -y \
     tmux rclone vim libgl1 libglib2.0-0 \
+    build-essential python3-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# 1.5 ビルド用 Python パッケージを先に更新
+RUN pip3 install --no-cache-dir --break-system-packages setuptools wheel
 
 # 2. ComfyUI 本体と依存関係の導入
 WORKDIR /workspace
@@ -13,8 +17,10 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     pip3 install --no-cache-dir -r requirements.txt
 
 # 3. SageAttention の導入
-# 5090 環境（CUDA 12.x）でその場でビルドさせるのが最も確実
-RUN pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation --break-system-packages
+# --no-build-isolation を使う場合、先に依存関係（triton, setuptools等）が
+# インストールされている必要があります。
+RUN pip3 install --no-cache-dir triton --break-system-packages && \
+    pip3 install --no-cache-dir sageattention==2.2.0 --no-build-isolation --break-system-packages
 
 # 4. Custom Nodesの導入
 ## Manager を pip から入れる（前回特定した最新仕様）
