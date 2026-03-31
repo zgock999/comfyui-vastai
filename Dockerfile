@@ -19,6 +19,9 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 WORKDIR /workspace
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
+    # 先に CUDA 13.1 対応の PyTorch 関連をインストール
+    pip3 install --no-cache-dir torch torchvision torchaudio \
+    --index-url https://download.pytorch.org/whl/cu131 && \
     pip3 install --no-cache-dir -r requirements.txt
 
 
