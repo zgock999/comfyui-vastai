@@ -15,21 +15,22 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 # 1.5 ビルド用 Python パッケージを先に更新（このイメージは導入済みなのでスキップ）
 #RUN pip3 install --no-cache-dir setuptools wheel
 
-# 2. ComfyUI 本体と依存関係の導入(このイメージは/root/が作業場所)
+# 2. ComfyUI 本体と依存関係の導入
 WORKDIR /workspace
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
-    cd ComfyUI && \
-    # 先に CUDA 13.1 対応の PyTorch 関連をインストール
-    pip3 install --no-cache-dir torch torchvision torchaudio \
+    cd /workspace/ComfyUI && \
+    # 1. 既存の cu128 版 torch を消し、確実に cu131 版（CUDA 13.1対応）を入れる
+    # また、ビルドを高速化しエラーを防ぐために ninja を追加
+    pip3 install --no-cache-dir --force-reinstall \
+    torch torchvision torchaudio ninja \
     --index-url https://download.pytorch.org/whl/cu131 && \
+    # 2. 残りの依存関係をインストール
     pip3 install --no-cache-dir -r requirements.txt
 
-
 # 3. SageAttention の導入
-# pipを用いたインストールはエラーになるため、公式の指定通りpython setup.pyでインストール
-# 30xx(8.6), 40xx(8.9), 50xx(10.0) のすべてに対応したバイナリを生成
 RUN git clone https://github.com/thu-ml/SageAttention.git && \
     cd SageAttention && \
+    # 環境変数をインラインで渡してビルド
     CUDA_HOME=/usr/local/cuda \
     TORCH_CUDA_ARCH_LIST="8.6 8.9 10.0" \
     python3 setup.py install
