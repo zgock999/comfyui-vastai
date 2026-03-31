@@ -33,7 +33,7 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 RUN git clone https://github.com/thu-ml/SageAttention.git && \
     cd SageAttention && \
     # 5060Ti(8.9) と 5090(10.0) を確実に有効化させる
-    CUDA_HOME=/usr/local/cuda-13.0 \
+    CUDA_HOME=/usr/local/cuda-13.1 \
     TORCH_CUDA_ARCH_LIST="8.6;8.9;10.0" \
     FORCE_CUDA=1 \
     python3 setup.py install
