@@ -7,7 +7,7 @@ USER root
 RUN apt-get update && apt-get install -y \
     tmux git rclone vim libgl1 libglib2.0-0 \
     build-essential python3-dev \
-    cuda-toolkit-13-1 
+    cuda-toolkit-12-8 
 
 
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
@@ -19,11 +19,8 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 WORKDIR /workspace
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd /workspace/ComfyUI && \
-    # 1. 既存の cu128 版 torch を消し、確実に cu131 版（CUDA 13.1対応）を入れる
-    # また、ビルドを高速化しエラーを防ぐために ninja を追加
-    pip3 install --no-cache-dir --force-reinstall \
-    torch torchvision torchaudio ninja \
-    --index-url https://download.pytorch.org/whl/cu131 && \
+    # ビルドを高速化しエラーを防ぐために ninja を追加
+    pip3 install --no-cache-dir ninja && \
     # 2. 残りの依存関係をインストール
     pip3 install --no-cache-dir -r requirements.txt
 
@@ -31,8 +28,9 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 RUN git clone https://github.com/thu-ml/SageAttention.git && \
     cd SageAttention && \
     # 環境変数をインラインで渡してビルド
-    CUDA_HOME=/usr/local/cuda \
+    CUDA_HOME=/usr/local/cuda-12.8 \
     TORCH_CUDA_ARCH_LIST="8.6 8.9 10.0" \
+    FORCE_CUDA=1 \
     python3 setup.py install
 
 ### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
