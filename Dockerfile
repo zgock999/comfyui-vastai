@@ -3,7 +3,8 @@ FROM rocker/cuda:cuda13.0-py3.12
 USER root
 
 # 1. パスを 13.0 に固定（ここが極めて重要）
-ENV CUDA_HOME=/usr/local/cuda-13.0
+# 1. パス固定（シンボリックリンク /usr/local/cuda を活用）
+ENV CUDA_HOME=/usr/local/cuda
 ENV PATH=${CUDA_HOME}/bin:${PATH}
 ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
@@ -12,7 +13,7 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 RUN apt-get update && apt-get install -y \
     git tmux rclone vim libgl1 libglib2.0-0 \
     build-essential python3-dev ninja-build \
-    cuda-toolkit-13-0 \
+    cuda-toolkit-13-1 \
     && rm -rf /var/lib/apt/lists/*
 # ※ 13.0 で統一するため、前回の /compat 削除は不要（あっても無害）です
 
