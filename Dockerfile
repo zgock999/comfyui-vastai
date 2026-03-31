@@ -33,19 +33,21 @@ RUN git clone https://github.com/thu-ml/SageAttention.git && \
     FORCE_CUDA=1 \
     python3 setup.py install
 
-### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
-RUN cd ComfyUI/custom_nodes && \
-    git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git && \
-    git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git && \
-    git clone --depth 1 https://github.com/yolain/ComfyUI-Easy-Use.git && \
-    git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Pack.git && \
-    git clone --depth 1 https://github.com/sylym/comfy_vid2vid comfyui-vid2vid
 
-# 各ノードの依存関係を個別にインストール（エラーが出たノードを特定するため）
-# 失敗してもビルドを止めない `--no-cache-dir` などを付けて安定させます
-RUN for req in /root/ComfyUI/custom_nodes/*/requirements.txt; do pip3 install --no-cache-dir -r "$req"; done
+WORKDIR /workspace/ComfyUI/custom_nodes
 
-# 5. ディレクトリの事前作成（rclone 同期先/このイメージでは素直に/root/ComfyUI/modelsにディレクトリが作られるので省略）
+# ネットワークエラー対策のため、1つずつ個別に実行し、キャッシュを活用する
+RUN git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git
+RUN git clone --depth 1 https://github.com/kijai/ComfyUI-KJNodes.git
+RUN git clone --depth 1 https://github.com/yolain/ComfyUI-Easy-Use.git
+RUN git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Impact-Pack.git
+RUN git clone --depth 1 https://github.com/sylym/comfy_vid2vid comfyui-vid2vid
+
+# 5. 各ノードの依存関係をインストール
+# requirements.txt が存在する場合のみ実行されるように記述
+RUN for req in */requirements.txt; do pip3 install --no-cache-dir -r "$req"; done
+
+# 5. ディレクトリの事前作成（rclone 同期先/このイメージでは素直に/workspace/ComfyUI/modelsにディレクトリが作られるので省略）
 
 # 6. 便利エイリアスの追加
 RUN echo "alias comfy='python3 /workspace/ComfyUI/main.py --listen 0.0.0.0 --use-sage-attention --fast --normalvram'" >> ~/.bashrc
