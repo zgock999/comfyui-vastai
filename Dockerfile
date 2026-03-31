@@ -32,7 +32,11 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 # 4. SageAttention (13.0 コンパイラで 8.6/8.9/10.0 用をビルド)
 RUN git clone https://github.com/thu-ml/SageAttention.git && \
     cd SageAttention && \
-    TORCH_CUDA_ARCH_LIST="8.6 8.9 10.0" FORCE_CUDA=1 python3 setup.py install
+    # 5060Ti(8.9) と 5090(10.0) を確実に有効化させる
+    CUDA_HOME=/usr/local/cuda-13.0 \
+    TORCH_CUDA_ARCH_LIST="8.6;8.9;10.0" \
+    FORCE_CUDA=1 \
+    python3 setup.py install
 
 # 5. Custom Nodes の導入 (ネットワークエラー対策で分割)
 WORKDIR /workspace/ComfyUI/custom_nodes
