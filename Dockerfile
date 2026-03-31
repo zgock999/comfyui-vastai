@@ -21,10 +21,12 @@ WORKDIR /workspace
 
 # 3. ComfyUI 本体と PyTorch (cu130) の導入
 # ホストの 570系ドライバと完全に一致させる
+RUN pip3 install --no-cache-dir ninja
+
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
     pip3 install --no-cache-dir --force-reinstall \
-    torch torchvision torchaudio ninja --index-url https://download.pytorch.org/whl/cu130 && \
+    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130 && \
     pip3 install --no-cache-dir -r requirements.txt
 
 # 4. SageAttention (13.0 コンパイラで 8.6/8.9/10.0 用をビルド)
