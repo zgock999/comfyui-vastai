@@ -24,14 +24,13 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
 
 # 3. SageAttention の導入
 # pipを用いたインストールはエラーになるため、公式の指定通りpython setup.pyでインストール
+# 30xx(8.6), 40xx(8.9), 50xx(10.0) のすべてに対応したバイナリを生成
 RUN git clone https://github.com/thu-ml/SageAttention.git && \
-    cd SageAttention && python setup.py install
+    cd SageAttention && \
+    CUDA_HOME=/usr/local/cuda \
+    TORCH_CUDA_ARCH_LIST="8.6 8.9 10.0" \
+    python3 setup.py install
 
-# 4. Custom Nodesの導入
-## Manager を pip から入れる（前回特定した最新仕様）
-RUN pip3 install  --no-cache-dir comfyui-manager
-
-## カスタムノードのインストール
 ### 一つの RUN で && を多用せず、分割するか個別に実行することで原因を特定しやすくします
 RUN cd ComfyUI/custom_nodes && \
     git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git && \
